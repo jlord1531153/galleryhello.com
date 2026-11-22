@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gallery Hello
 
-## Getting Started
+A curated gallery of AI portraits — sweet & sultry, office, qipao and JK fashion — with public previews for every collection.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router, Turbopack, Cache Components)
+- Tailwind CSS 4
+- Cloudflare Workers via [OpenNext](https://opennext.js.org/cloudflare)
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site reads three environment variables. Copy `.env.example` to `.env.local` and fill them in:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_IMAGE_CDN_URL` | Origin serving the collection images, e.g. `https://image.galleryhello.com` |
+| `NEXT_PUBLIC_SITE_URL` | Public origin of the deployed site, used for canonical URLs, the sitemap and Open Graph metadata |
+| `SITE_CONTACT_EMAIL` | Optional. The contact address in the footer and on the About page. When unset the contact row is omitted entirely. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Data
 
-## Learn More
+- `data/category.json` — the five categories and their display metadata.
+- `data/collections.json` — the collection catalogue. Each entry carries a `slug`, `coverImage` and `previewImages` pointing at the image origin above.
 
-To learn more about Next.js, take a look at the following resources:
+Image URLs follow `<origin>/<category-folder>/<set-id>/<file>`, where `category-folder` is the folder name under the bucket and `set-id` is the numeric id of the set. The `sweet-sultry` category maps to the `sweet-allure` folder — see `CATEGORY_SOURCE_FOLDERS` in `lib/collections.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Verifying a change
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm run build && pnpm start   # then:
+./scripts/verify-site.sh       # HTTP checks against the running site
+```
 
-## Deploy on Vercel
+## Deploying to Cloudflare Workers
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The build output is produced by OpenNext, then deployed with Wrangler.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm run build:cf     # -> .open-next/
+pnpm run deploy       # build + upload to Cloudflare
+pnpm run preview      # build + run locally in workerd
+```
+
+`wrangler.jsonc` holds the Worker configuration. The R2 bucket backing the incremental cache is created automatically on the first deploy.
+
+In the Cloudflare dashboard set the build command to `npx opennextjs-cloudflare build` and the deploy command to `npx opennextjs-cloudflare deploy`, with `NEXT_PUBLIC_IMAGE_CDN_URL` and `NEXT_PUBLIC_SITE_URL` configured as build variables.

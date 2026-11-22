@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "name": "gallery-hello",
+  "name": "galleryhello-com",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
     // Enable the Node.js API.
@@ -18,13 +18,7 @@
       // Stores the incremental cache, including the "composable" entries
       // written by `use cache`.
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "gallery-hello-cache"
-    }
-  ],
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "gallery-hello"
+      "bucket_name": "galleryhello-com-cache"
     }
   ],
   "images": {
