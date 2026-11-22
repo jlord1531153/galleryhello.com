@@ -24,7 +24,7 @@ async function getCurrentYear(): Promise<number> {
 
 export async function Footer() {
   const contactEmail = getContactEmail();
-  const year = await getCurrentYear();
+  const year = getCurrentYear();
 
   return (
     <footer className="mt-24 border-t border-divider bg-surface">

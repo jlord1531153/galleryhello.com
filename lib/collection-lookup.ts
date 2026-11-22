@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { getCollectionBySlug, getCollections } from "@/lib/collections";
 import type { Collection } from "@/lib/types";
@@ -7,18 +6,11 @@ import type { Collection } from "@/lib/types";
  * Looks up a collection and throws the not-found error when the slug does
  * not exist.
  *
- * The lookup is cached so that the result is stable during prerendering
- * and the request never waits on anything uncached. Because the check
- * happens inside a cached function, it runs before the response starts —
- * so an unknown slug produces a real HTTP 404 status rather than a 200
- * carrying 404 content.
+ * The lookup reads the bundled collection data, so it resolves without
+ * waiting on anything. Unknown slugs are rejected by the proxy before the
+ * response starts, which is what turns them into a real 404 status.
  */
-export async function getCollectionOrNotFound(
-  slug: string,
-): Promise<Collection> {
-  "use cache";
-  cacheLife("hours");
-
+export function getCollectionOrNotFound(slug: string): Collection {
   const collection = getCollectionBySlug(slug);
 
   if (!collection) {

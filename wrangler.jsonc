@@ -13,6 +13,14 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "r2_buckets": [
+    {
+      // Stores the incremental cache, including the "composable" entries
+      // written by `use cache`.
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "gallery-hello-cache"
+    }
+  ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",

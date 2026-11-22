@@ -66,10 +66,10 @@ export default async function CollectionDetailPage({
 }: PageProps<"/collections/[slug]">) {
   const { slug } = await params;
 
-  // The lookup is cached and throws the not-found error for an unknown
-  // slug. Running it here — before the Suspense boundary — means the
-  // response status is set to 404 rather than 200 with 404 content.
-  await getCollectionOrNotFound(slug);
+  // The lookup throws the not-found error for an unknown slug. Running it
+  // here — before the Suspense boundary — means the response status is set
+  // to 404 rather than 200 with 404 content.
+  getCollectionOrNotFound(slug);
 
   return (
     <div className="container-page py-10 lg:py-16">
