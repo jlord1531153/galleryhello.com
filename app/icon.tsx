@@ -3,6 +3,10 @@ import { ImageResponse } from "next/og";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
+// A static export has no server to render this route at request time, so
+// the route is prerendered into a file during the build.
+export const dynamic = "force-static";
+
 /**
  * The favicon: the brand mark — a warm accent dot on the dark background.
  */

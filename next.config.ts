@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const imageCdnUrl = process.env.NEXT_PUBLIC_IMAGE_CDN_URL;
 
@@ -19,20 +18,25 @@ const imageCdnRemotePatterns = imageCdnUrl
   : [];
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
+  // The site is fully prerendered: every page, the sitemap, the robots
+  // file and the social images are written out as static files.
+  //
+  // Only the production build exports. The dev server keeps the normal
+  // server mode, so the image optimizer and the hot reload work locally.
+  ...(process.env.NODE_ENV === "production"
+    ? { output: "export" as const }
+    : {}),
   images: {
     remotePatterns: imageCdnRemotePatterns,
-  },
-  cacheLife: {
-    // A short-lived profile used for values that must stay stable during
-    // prerendering but still refresh over time — currently the copyright
-    // year in the footer.
-    hours: {
-      stale: 3600,
-      revalidate: 900,
-      expire: 86400,
-    },
+    // A static export has no image optimizer behind `/_next/image`, so a
+    // custom loader points straight at Cloudflare Image Resizing instead —
+    // the same transformation, expressed as a plain URL.
+    //
+    // The dev server keeps the default loader: it runs the optimizer
+    // itself, and `/cdn-cgi/image/` only exists on Cloudflare's edge.
+    ...(process.env.NODE_ENV === "production"
+      ? { loader: "custom" as const, loaderFile: "./lib/image-loader.ts" }
+      : {}),
   },
   turbopack: {
     rules: {
@@ -45,7 +49,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-// Wires the Cloudflare bindings into the local dev server, so `next dev`
-// behaves like the deployed Worker.
-initOpenNextCloudflareForDev();

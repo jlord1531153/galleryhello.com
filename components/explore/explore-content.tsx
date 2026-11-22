@@ -1,27 +1,21 @@
 "use client";
 
-import { use } from "react";
+import { useSearchParams } from "next/navigation";
 import { ExploreBrowser } from "@/components/explore/explore-browser";
 import { getCategories, getCollections } from "@/lib/collections";
 
-interface ExploreContentProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
 /**
- * Reads the `?category=` query parameter and renders the interactive
- * browser.
+ * Renders the interactive browser.
  *
- * This is a separate component so the `searchParams` access sits behind a
- * `<Suspense>` boundary in the page — the static shell of the page still
- * prerenders, and only this part streams in at request time.
+ * The `?category=` query parameter is read on the client with
+ * `useSearchParams`. A server-side `searchParams` prop would make the
+ * route dynamic, which a static export cannot do — the query string is
+ * only available in the browser.
  */
-export function ExploreContent({ searchParams }: ExploreContentProps) {
-  const params = use(searchParams);
-  const rawCategory = params.category;
-
-  const initialCategory =
-    typeof rawCategory === "string" ? rawCategory : "all";
+export function ExploreContent() {
+  const searchParams = useSearchParams();
+  const rawCategory = searchParams.get("category");
+  const initialCategory = rawCategory ?? "all";
 
   return (
     <ExploreBrowser

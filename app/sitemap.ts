@@ -2,6 +2,10 @@ import type { MetadataRoute } from "next";
 import { getCollections } from "@/lib/collections";
 import { SITE_URL } from "@/lib/site-config";
 
+// A static export has no server to render this route at request time, so
+// the route is prerendered into a file during the build.
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 

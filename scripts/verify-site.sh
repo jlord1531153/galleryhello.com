@@ -1,5 +1,5 @@
 #!/bin/bash
-# Boots the production server, runs a set of HTTP checks against it, and
+# Serves the static export, runs a set of HTTP checks against it, and
 # shuts it down again. Used to verify the site without leaving a server
 # process running.
 set -u
@@ -8,6 +8,11 @@ cd "$(dirname "$0")/.."
 
 PORT=3000
 BASE="http://127.0.0.1:${PORT}"
+
+if [ ! -d "out" ]; then
+  echo "out/ not found — run 'pnpm run build' first."
+  exit 1
+fi
 
 # Read the collection slugs straight from the data file so the checks
 # follow the catalogue instead of a hardcoded list.
@@ -20,7 +25,7 @@ import json
 print(' '.join(c['slug'] for c in json.load(open('data/category.json'))))
 ")
 
-pnpm start > /tmp/gallery-verify.log 2>&1 &
+python3 -m http.server "${PORT}" --directory out > /tmp/gallery-verify.log 2>&1 &
 SERVER_PID=$!
 
 # Wait for the server to accept requests.
@@ -36,7 +41,7 @@ check() {
   local path="$1"
   local expected="$2"
   local code
-  code=$(curl -s -o /dev/null -w "%{http_code}" "${BASE}${path}")
+  code=$(curl -sL -o /dev/null -w "%{http_code}" "${BASE}${path}")
   local mark="OK "
   if [ "$code" != "$expected" ]; then
     mark="FAIL"
@@ -64,14 +69,14 @@ check "/random-unknown-path" 404
 
 echo
 echo "=== 404 BODY (unknown path) ==="
-curl -s "${BASE}/random-unknown-path" | grep -c "Page Not Found" | sed 's/^/Page Not Found occurrences: /'
+curl -sL "${BASE}/random-unknown-path" | grep -c "Page Not Found" | sed 's/^/Page Not Found occurrences: /'
 echo "Header/Footer present on 404:"
-curl -s "${BASE}/random-unknown-path" | grep -c "GALLERY HELLO" | sed 's/^/  logo matches: /'
+curl -sL "${BASE}/random-unknown-path" | grep -c "GALLERY HELLO" | sed 's/^/  logo matches: /'
 
 echo
 echo "=== 404 STATUS (unknown collection) ==="
-curl -s -o /dev/null -w "status=%{http_code}\n" "${BASE}/collections/does-not-exist"
-curl -s "${BASE}/collections/does-not-exist" | grep -c "Page Not Found" | sed 's/^/Page Not Found occurrences: /'
+curl -sL -o /dev/null -w "status=%{http_code}\n" "${BASE}/collections/does-not-exist"
+curl -sL "${BASE}/collections/does-not-exist" | grep -c "Page Not Found" | sed 's/^/Page Not Found occurrences: /'
 
 echo
 echo "=== IMAGE AVAILABILITY (from the data file) ==="
@@ -99,18 +104,18 @@ echo "Images checked: ${total}, missing: ${missing}"
 echo
 echo "=== NO UNLOCK / AUTH / PAYMENT CONTROLS ==="
 for path in "/" "/explore" "/about" "/privacy" "/terms"; do
-  body=$(curl -s "${BASE}${path}")
+  body=$(curl -sL "${BASE}${path}")
   hits=$(printf '%s' "$body" | grep -io "unlock now\|sign in\|log in\|sign up\|add to favourites\|buy now\|subscribe now\|checkout\|top up" | wc -l | tr -d ' ')
   printf "  %-38s forbidden-control hits: %s\n" "$path" "$hits"
 done
 
 echo
 echo "=== SITEMAP ENTRIES ==="
-curl -s "${BASE}/sitemap.xml" | grep -c "<url>" | sed 's/^/url count: /'
+curl -sL "${BASE}/sitemap.xml" | grep -c "<url>" | sed 's/^/url count: /'
 
 echo
 echo "=== ROBOTS ==="
-curl -s "${BASE}/robots.txt"
+curl -sL "${BASE}/robots.txt"
 
 kill "$SERVER_PID" 2>/dev/null
 wait "$SERVER_PID" 2>/dev/null

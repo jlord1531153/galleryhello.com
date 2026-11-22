@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/explore" },
 };
 
-export default function ExplorePage({ searchParams }: PageProps<"/explore">) {
+export default function ExplorePage() {
   return (
     <div className="container-page py-14 lg:py-20">
       <PageTitle
@@ -29,7 +29,7 @@ export default function ExplorePage({ searchParams }: PageProps<"/explore">) {
             </div>
           }
         >
-          <ExploreContent searchParams={searchParams} />
+          <ExploreContent />
         </Suspense>
       </div>
     </div>

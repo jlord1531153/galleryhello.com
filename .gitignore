@@ -17,12 +17,6 @@
 /.next/
 /out/
 
-# opennext (Cloudflare Workers build output)
-/.open-next/
-/.cloudflare/
-/.wrangler/
-cloudflare-env.d.ts
-
 # production
 /build
 
@@ -38,8 +32,6 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-.dev.vars
-.dev.vars.*
 
 # vercel
 .vercel

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cacheLife } from "next/cache";
 import { getContactEmail, SITE_NAME, SITE_TAGLINE } from "@/lib/site-config";
 
 const NAV_LINKS = [
@@ -12,13 +11,9 @@ const NAV_LINKS = [
 /**
  * The current year, for the copyright line.
  *
- * Cached so the value is stable during prerendering. The cache entry is
- * revalidated daily, so the year rolls over automatically without needing
- * a code change or a request-time render.
+ * Read at build time, so the value is baked into the prerendered pages.
  */
-async function getCurrentYear(): Promise<number> {
-  "use cache";
-  cacheLife("hours");
+function getCurrentYear(): number {
   return new Date().getFullYear();
 }
 

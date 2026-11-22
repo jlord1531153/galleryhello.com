@@ -4,6 +4,10 @@ export const alt = "Gallery Hello — Beautiful Portraits & Exclusive Collection
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// A static export has no server to render this route at request time, so
+// the route is prerendered into a file during the build.
+export const dynamic = "force-static";
+
 /**
  * The default social sharing image for the site.
  */
