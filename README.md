@@ -42,9 +42,11 @@ Every page is prerendered: the home page, the category pages, the collection det
 
 ### Images
 
-A static export has no image optimizer behind `/_next/image`. `lib/image-loader.ts` rewrites those requests to Cloudflare Image Resizing instead, so the responsive `srcset` still works and the images are still served as WebP at the right size.
+A static export has no image optimizer behind `/_next/image`. `lib/image-loader.ts` resolves those requests to the source image on the storage bucket — the collection images are already WebP and sized for the largest place they are displayed, so they are served as-is.
 
-`public/_headers` sets the cache headers. Cloudflare Pages picks that file up automatically.
+Set the cache headers for the images on the bucket itself (a long `max-age` with `immutable`); the file names never change, so the responses can be cached indefinitely.
+
+`public/_headers` sets the cache headers for the site's own assets. Cloudflare Pages picks that file up automatically.
 
 ## Verifying a change
 

@@ -3,8 +3,3 @@
 
 /_next/image*
   Cache-Control: public,max-age=31536000,immutable
-
-# Cloudflare Image Resizing output — the transformation is deterministic
-# for a given width and source, so it can be cached indefinitely.
-/cdn-cgi/image/*
-  Cache-Control: public,max-age=31536000,immutable

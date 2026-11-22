@@ -29,11 +29,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: imageCdnRemotePatterns,
     // A static export has no image optimizer behind `/_next/image`, so a
-    // custom loader points straight at Cloudflare Image Resizing instead —
-    // the same transformation, expressed as a plain URL.
+    // custom loader points straight at the source image instead.
     //
     // The dev server keeps the default loader: it runs the optimizer
-    // itself, and `/cdn-cgi/image/` only exists on Cloudflare's edge.
+    // itself, and needs no loader file.
     ...(process.env.NODE_ENV === "production"
       ? { loader: "custom" as const, loaderFile: "./lib/image-loader.ts" }
       : {}),
