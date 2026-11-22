@@ -1,0 +1,38 @@
+
+[
+    {
+      "id": "sweet-sultry",
+      "name": "Sweet & Sultry",
+      "slug": "sweet-sultry",
+      "description": "Soft, sweet, and subtly seductive AI portrait photography, blending innocent charm with captivating elegance.",
+      "order": 1
+    },
+    {
+      "id": "office-lady",
+      "name": "Office Lady",
+      "slug": "office-lady",
+      "description": "Sophisticated office-inspired portraits featuring elegant workwear, tailored suits, and confident professional style.",
+      "order": 2
+    },
+    {
+      "id": "ai-portraits",
+      "name": "AI Portraits",
+      "slug": "ai-portraits",
+      "description": "A curated collection of AI-generated portraits celebrating beauty, personality, artistic expression, and realistic photography.",
+      "order": 3
+    },
+    {
+      "id": "qipao",
+      "name": "Qipao Beauty",
+      "slug": "qipao",
+      "description": "Elegant AI portraits featuring traditional Chinese qipao dresses, refined silhouettes, and timeless Eastern-inspired aesthetics.",
+      "order": 4
+    },
+    {
+      "id": "jk-fashion",
+      "name": "JK Fashion",
+      "slug": "jk-fashion",
+      "description": "Japanese school-uniform-inspired fashion portraits featuring adult models, classic pleated skirts, and youthful street-style aesthetics.",
+      "order": 5
+    }
+  ]
